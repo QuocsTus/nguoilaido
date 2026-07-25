@@ -403,8 +403,7 @@
               rgba(38, 71, 52, 0.16),
               rgba(38, 71, 52, 0.1)
             ),
-            url("https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1200&q=80")
-              center/cover;
+            url("assets/anh-nen-1.jpg") center/cover;
         }
       }
     </style>
@@ -490,13 +489,12 @@
                 <path d="M9.5 21v-6h5v6"></path>
               </svg>
             </span>
-            <span
-              class="hidden font-serifDisplay text-2xl font-semibold sm:block"
+            <span class="font-serifDisplay text-base font-semibold sm:text-2xl"
               >Lưu bút tri ân</span
             >
           </a>
 
-          <nav class="hidden items-center gap-7 md:flex">
+          <nav class="hidden items-center gap-7 lg:flex">
             <a
               href="#home"
               class="border-b border-pine pb-1 text-sm font-semibold text-pine"
@@ -533,8 +531,30 @@
             <button
               type="button"
               data-audio-mute
-              class="stitched hidden rounded-full bg-pine px-5 py-3 text-sm font-semibold text-paper shadow-paper transition duration-300 hover:-translate-y-0.5 hover:bg-[#1d3928] md:inline-flex md:items-center md:gap-2"
+              class="stitched hidden rounded-full bg-pine px-5 py-3 text-sm font-semibold text-paper shadow-paper transition duration-300 hover:-translate-y-0.5 hover:bg-[#1d3928] lg:inline-flex lg:items-center lg:gap-2"
               aria-label="Bật nhạc"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                class="h-4 w-4 fill-none stroke-current stroke-[1.9]"
+              >
+                <path d="M9 18V6l10-2v12"></path>
+                <path d="M9 11 19 9"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="16" cy="16" r="3"></circle>
+                <path
+                  data-audio-slash
+                  d="M4 4 20 20"
+                  class="hidden stroke-[2.4] stroke-linecap-round"
+                ></path>
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              data-audio-mute
+              class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-pine/15 bg-pine text-paper shadow-paper transition duration-300 hover:-translate-y-0.5 hover:bg-[#1d3928] lg:hidden"
+              aria-label="Báº­t nháº¡c"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -554,7 +574,7 @@
 
             <button
               id="menu-toggle"
-              class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-pine/15 bg-ivory/80 text-pine md:hidden"
+              class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-pine/15 bg-ivory/80 text-pine lg:hidden"
               aria-label="Mở menu"
             >
               <svg
@@ -571,10 +591,10 @@
 
         <div
           id="mobile-menu"
-          class="mx-auto max-h-0 max-w-7xl overflow-hidden px-4 opacity-0 transition-all duration-300 md:hidden"
+          class="mx-auto max-h-0 max-w-7xl overflow-hidden px-4 py-3 opacity-0 transition-all duration-300 lg:hidden"
         >
           <div
-            class="paper-card rounded-[28px] border border-white/60 px-5 py-0 shadow-paper"
+            class="paper-card rounded-[28px] border border-white/60 px-6 py-6 shadow-paper"
           >
             <nav class="flex flex-col gap-4 text-sm text-moss">
               <a href="#home" class="font-semibold text-pine">Trang chủ</a>
@@ -584,7 +604,7 @@
               <a href="#letter">Thư gửi cô</a>
               <a href="#memory">Kỷ niệm</a>
             </nav>
-            <button
+            <!-- <button
               type="button"
               data-audio-mute
               class="stitched mt-5 inline-flex items-center gap-2 rounded-full bg-pine px-5 py-3 text-sm font-semibold text-paper shadow-paper"
@@ -604,8 +624,7 @@
                   class="hidden stroke-[2.4] stroke-linecap-round"
                 ></path>
               </svg>
-              Bật nhạc
-            </button>
+            </button> -->
           </div>
         </div>
       </header>
@@ -637,7 +656,7 @@
                   class="relative z-10 flex items-center px-6 py-10 sm:px-10 lg:px-12"
                 >
                   <div
-                    class="max-w-xl rounded-[30px] bg-[rgba(255,250,240,0.56)] p-5 backdrop-blur-[2px] sm:p-7 lg:bg-transparent lg:p-0 lg:backdrop-blur-0"
+                    class="mx-auto max-w-xl rounded-[30px] bg-[rgba(255,250,240,0.56)] p-5 text-center backdrop-blur-[2px] sm:p-7 lg:mx-0 lg:bg-transparent lg:p-0 lg:text-left lg:backdrop-blur-0"
                   >
                     <p
                       class="font-script text-[2rem] leading-none text-olive sm:text-[2.4rem]"
@@ -650,7 +669,9 @@
                       Cảm ơn cô vì đã luôn đồng hành, dạy dỗ, yêu thương và
                       truyền cảm hứng để con trưởng thành.
                     </p>
-                    <div class="mt-8 flex flex-wrap items-center gap-4">
+                    <div
+                      class="mt-8 flex flex-wrap items-center justify-center gap-4 lg:justify-start"
+                    >
                       <a
                         href="#journey"
                         class="stitched inline-flex items-center gap-3 rounded-full bg-pine px-7 py-4 text-sm font-semibold text-paper shadow-paper transition duration-300 hover:-translate-y-1 hover:bg-[#1f3e2b]"
@@ -726,9 +747,9 @@
                 <div class="flex items-center gap-3 text-moss">
                   <span class="text-xl">❦</span>
                   <h2
-                    class="font-serifDisplay text-3xl font-semibold uppercase tracking-[0.16em] text-pine sm:text-4xl"
+                    class="text-center font-serifDisplay text-2xl font-semibold uppercase tracking-[0.12em] text-pine lg:text-4xl sm:tracking-[0.16em]"
                   >
-                    Hành trình của chúng con
+                    Hành trình của con
                   </h2>
                   <span class="text-xl">❦</span>
                 </div>
@@ -1076,6 +1097,7 @@
       );
       const audioSlashIcons = document.querySelectorAll("[data-audio-slash]");
       const menuToggle = document.getElementById("menu-toggle");
+      const mobileMenu = document.getElementById("mobile-menu");
       const pageShell = document.getElementById("page-shell");
       const mainContent = document.getElementById("main-content");
       const journeyDetailPage = document.getElementById("journey-detail-page");
@@ -1204,6 +1226,12 @@
           pageShell.classList.toggle("menu-open");
         });
       }
+
+      mobileMenu?.querySelectorAll('a[href^="#"]').forEach((link) => {
+        link.addEventListener("click", () => {
+          pageShell?.classList.remove("menu-open");
+        });
+      });
 
       const setActiveJourneyTab = (tab) => {
         journeyTabs.forEach((item) => {
