@@ -224,6 +224,122 @@
         padding-bottom: 1rem;
       }
 
+      .journey-card {
+        cursor: pointer;
+      }
+
+      .journey-card.is-active {
+        border-color: rgba(118, 129, 95, 0.5);
+        box-shadow: 0 16px 30px rgba(60, 84, 59, 0.18);
+      }
+
+      .journey-message {
+        text-align: justify;
+      }
+
+      body.is-preloading {
+        overflow: hidden;
+      }
+
+      #page-shell {
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+      }
+
+      body.is-preloading #page-shell {
+        opacity: 0;
+        transform: translateY(12px);
+        pointer-events: none;
+      }
+
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background:
+          radial-gradient(
+            circle at top,
+            rgba(255, 248, 228, 0.9),
+            rgba(244, 234, 216, 0.96)
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 250, 240, 0.98),
+            rgba(244, 234, 216, 0.96)
+          );
+        transition:
+          opacity 0.45s ease,
+          visibility 0.45s ease;
+      }
+
+      .loading-overlay.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loading-card {
+        width: min(100%, 360px);
+        border: 1px solid rgba(204, 183, 156, 0.7);
+        border-radius: 30px;
+        padding: 28px 24px;
+        text-align: center;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 250, 240, 0.98),
+            rgba(252, 245, 234, 0.95)
+          ),
+          radial-gradient(
+            circle at top left,
+            rgba(255, 255, 255, 0.32),
+            transparent 42%
+          );
+        box-shadow: 0 24px 60px rgba(112, 86, 56, 0.12);
+      }
+
+      .loading-face {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 78px;
+        height: 78px;
+        border-radius: 999px;
+        color: #264734;
+        background: rgba(38, 71, 52, 0.1);
+        box-shadow:
+          inset 0 0 0 1px rgba(38, 71, 52, 0.08),
+          0 10px 24px rgba(38, 71, 52, 0.12);
+        animation: pulseSoft 2.4s ease-in-out infinite;
+      }
+
+      .loading-dots {
+        display: inline-flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .loading-dots span {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: rgba(38, 71, 52, 0.75);
+        animation: loadingBounce 1.2s ease-in-out infinite;
+      }
+
+      .loading-dots span:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+
+      .loading-dots span:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
       @keyframes petalFall {
         0% {
           transform: translate3d(0, -10vh, 0) rotate(0deg);
@@ -255,6 +371,19 @@
         }
       }
 
+      @keyframes loadingBounce {
+        0%,
+        80%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.45;
+        }
+        40% {
+          transform: translateY(-7px);
+          opacity: 1;
+        }
+      }
+
       @media (max-width: 767px) {
         .paper-cut {
           clip-path: path(
@@ -280,7 +409,36 @@
       }
     </style>
   </head>
-  <body class="bg-paper text-bark">
+  <body class="is-preloading bg-paper text-bark">
+    <audio id="background-audio" loop preload="auto">
+      <source src="assets/nguoithay.mp3" type="audio/mpeg" />
+    </audio>
+    <div id="loading-overlay" class="loading-overlay" aria-live="polite">
+      <div class="loading-card">
+        <div class="loading-face">
+          <svg
+            viewBox="0 0 64 64"
+            class="h-10 w-10 fill-none stroke-current stroke-[2.2]"
+          >
+            <circle cx="32" cy="32" r="22"></circle>
+            <path d="M24 27h.01"></path>
+            <path d="M40 27h.01"></path>
+            <path d="M23 39c3.2-3.5 6.4-5.3 9-5.3 2.7 0 5.9 1.8 9 5.3"></path>
+            <path d="M18 18l6 5"></path>
+            <path d="M46 18l-6 5"></path>
+          </svg>
+        </div>
+        <p class="mt-5 font-script text-[2.3rem] leading-none text-olive">
+          Hãy đợi chút (˶ᵔ ᵕ ᵔ˶)
+        </p>
+
+        <div class="loading-dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
     <div class="pointer-events-none fixed inset-0 overflow-hidden">
       <span
         class="petal left-[6%] top-0"
@@ -373,7 +531,10 @@
 
           <div class="flex items-center gap-3">
             <button
+              type="button"
+              data-audio-mute
               class="stitched hidden rounded-full bg-pine px-5 py-3 text-sm font-semibold text-paper shadow-paper transition duration-300 hover:-translate-y-0.5 hover:bg-[#1d3928] md:inline-flex md:items-center md:gap-2"
+              aria-label="Bật nhạc"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -383,8 +544,12 @@
                 <path d="M9 11 19 9"></path>
                 <circle cx="6" cy="18" r="3"></circle>
                 <circle cx="16" cy="16" r="3"></circle>
+                <path
+                  data-audio-slash
+                  d="M4 4 20 20"
+                  class="hidden stroke-[2.4] stroke-linecap-round"
+                ></path>
               </svg>
-              Bật nhạc
             </button>
 
             <button
@@ -420,7 +585,10 @@
               <a href="#memory">Kỷ niệm</a>
             </nav>
             <button
+              type="button"
+              data-audio-mute
               class="stitched mt-5 inline-flex items-center gap-2 rounded-full bg-pine px-5 py-3 text-sm font-semibold text-paper shadow-paper"
+              aria-label="Bật nhạc"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -430,6 +598,11 @@
                 <path d="M9 11 19 9"></path>
                 <circle cx="6" cy="18" r="3"></circle>
                 <circle cx="16" cy="16" r="3"></circle>
+                <path
+                  data-audio-slash
+                  d="M4 4 20 20"
+                  class="hidden stroke-[2.4] stroke-linecap-round"
+                ></path>
               </svg>
               Bật nhạc
             </button>
@@ -437,7 +610,7 @@
         </div>
       </header>
 
-      <main>
+      <main id="main-content">
         <section
           id="home"
           class="relative overflow-hidden px-4 pb-16 pt-6 sm:px-6 lg:px-10"
@@ -447,7 +620,7 @@
               class="absolute inset-x-0 top-10 h-32 rounded-full bg-[#ffdba6]/20 blur-3xl"
             ></div>
             <div
-              class="paper-card relative min-h-[590px] overflow-hidden rounded-[38px] border border-white/55 shadow-paper"
+              class="paper-card relative min-h-[540px] overflow-hidden rounded-[38px] border border-white/55 shadow-paper"
             >
               <div class="absolute inset-0 bg-papergrain opacity-70"></div>
               <div
@@ -458,7 +631,7 @@
               ></div>
 
               <div
-                class="grid min-h-[590px] items-stretch lg:grid-cols-[44%_56%]"
+                class="grid min-h-[540px] items-stretch lg:grid-cols-[44%_56%]"
               >
                 <div
                   class="relative z-10 flex items-center px-6 py-10 sm:px-10 lg:px-12"
@@ -492,6 +665,15 @@
                         </svg>
                       </a>
                     </div>
+                    <!-- <div class="mt-6 flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        data-audio-mute
+                        class="inline-flex items-center gap-2 rounded-full border border-pine/15 bg-transparent px-5 py-3 text-sm font-semibold text-pine transition duration-300 hover:-translate-y-0.5 hover:bg-white/50"
+                      >
+                        <span data-audio-mute-label>Báº­t Ã¢m thanh</span>
+                      </button>
+                    </div> -->
                   </div>
                 </div>
 
@@ -553,10 +735,19 @@
                 <span class="h-px w-12 bg-sand sm:w-24"></span>
               </div>
 
-              <div class="mt-10 grid gap-5 md:grid-cols-3 xl:grid-cols-6">
+              <div class="mt-10 grid gap-5 md:grid-cols-3 xl:grid-cols-5">
                 <article
-                  class="group paper-card rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
+                  class="journey-card group paper-card flex flex-col rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
                   id="moments"
+                  data-journey-tab
+                  data-journey-image="assets/ngaydaugapco.jpg"
+                  data-journey-images="assets/ngaydaugapco.jpg"
+                  data-journey-alt="Lớp học ngày đầu gặp cô"
+                  data-journey-title="Ngày đầu gặp cô"
+                  data-journey-message-1="Ngày đầu tiên bước vào ngôi trường mới, con mang theo biết bao bỡ ngỡ của một học sinh lớp 6. Giữa sân trường đông đúc và xa lạ, cô đã xuất hiện với nụ cười hiền hậu, đón chúng con vào lớp bằng sự ân cần và ấm áp"
+                  data-journey-message-2="Khoảnh khắc cô gọi tên từng học sinh, hướng dẫn chúng con ổn định chỗ ngồi và nhẹ nhàng động viên những gương mặt còn rụt rè, con cảm nhận được sự gần gũi như một người mẹ thứ hai. Từ giây phút ấy, cô không chỉ là cô giáo chủ nhiệm mà còn là người đồng hành cùng con trên suốt chặng đường thanh xuân dưới mái trường này."
+                  data-journey-message-3="Con không ngờ rằng ngày cô đón con vào lớp 6 năm ấy lại trở thành điểm khởi đầu cho biết bao kỷ niệm đẹp, những bài học quý giá và những dấu ấn không thể nào quên trong tuổi học trò của con."
+                  data-journey-message-4="Ngày đầu gặp cô là ngày con bước vào lớp 6, còn hôm nay, đó đã trở thành một trong những ký ức đẹp nhất của thanh xuân con. 💚"
                 >
                   <div
                     class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-paper bg-pine text-sm font-semibold tracking-[0.18em] text-paper shadow-md ring-2 ring-pine/20 transition duration-500 group-hover:-translate-y-1 group-hover:scale-105"
@@ -564,13 +755,13 @@
                     01
                   </div>
                   <h3
-                    class="mt-4 font-serifDisplay text-[1.6rem] font-semibold text-pine"
+                    class="mt-4 flex min-h-[5.5rem] items-center justify-center px-2 text-center font-serifDisplay text-[1.6rem] font-semibold leading-tight text-pine"
                   >
                     Ngày đầu gặp cô
                   </h3>
                   <div class="mt-4 overflow-hidden rounded-[14px]">
                     <img
-                      src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80"
+                      src="assets/ngaydaugapco.jpg"
                       alt="Lớp học ngày đầu gặp cô"
                       class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
                     />
@@ -582,34 +773,18 @@
                 </article>
 
                 <article
-                  class="group paper-card rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
-                >
-                  <div
-                    class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-paper bg-pine text-sm font-semibold tracking-[0.18em] text-paper shadow-md ring-2 ring-pine/20 transition duration-500 group-hover:-translate-y-1 group-hover:scale-105"
-                  >
-                    02
-                  </div>
-                  <h3
-                    class="mt-4 font-serifDisplay text-[1.6rem] font-semibold text-pine"
-                  >
-                    Những khoảnh khắc đáng nhớ
-                  </h3>
-                  <div class="mt-4 overflow-hidden rounded-[14px]">
-                    <img
-                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
-                      alt="Ảnh tập thể học sinh và cô"
-                      class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <p class="mt-4 text-sm leading-7 text-bark/80">
-                    Từng bức ảnh, từng tiếng cười tập thể đều trở thành những
-                    mảnh ghép sáng trong ký ức học trò.
-                  </p>
-                </article>
-
-                <article
-                  class="group paper-card rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
+                  class="journey-card group paper-card flex flex-col rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
                   id="tribute"
+                  data-journey-tab
+                  data-journey-image="assets/nguoitruyencamhung-1.jpg"
+                  data-journey-images="assets/nguoitruyencamhung-1.jpg|assets/nguoitruyencamhung-2.jpg|assets/nguoitruyencamhung-3.jpg|assets/nguoitruyencamhung-4.jpg|assets/nguoitruyencamhung-5.jpg"
+                  data-journey-alt="Cô giáo hướng dẫn học sinh"
+                  data-journey-title="Người truyền cảm hứng"
+                  data-journey-message-1="Trong suốt những năm tháng học trò, điều khiến con luôn biết ơn và trân trọng nhất chính là sự quan tâm đặc biệt mà cô đã dành cho con."
+                  data-journey-message-2="Trước mỗi cuộc thi, khi con mang trong mình những lo lắng, áp lực và cả sự hồi hộp, cô luôn là người dành thời gian gặp riêng con. Cô hỏi han, động viên và tiếp thêm cho con niềm tin trước khi bước vào những thử thách quan trọng. Cô tin tưởng con nhiều hơn cả những gì con từng tin vào chính mình. Mỗi lời động viên của cô đều trở thành nguồn động lực để con cố gắng hơn, mạnh mẽ hơn và không bỏ cuộc trước khó khăn. Những lúc con cảm thấy áp lực hay sợ thất bại, cô luôn nhắc con rằng chỉ cần nỗ lực hết mình là đã thành công rồi."
+                  data-journey-message-3="Con hiểu rằng cô quan tâm đến rất nhiều học sinh, nhưng cô vẫn luôn dành cho con sự ưu ái và sự động viên đặc biệt. Chính điều đó khiến con cảm nhận được sự yêu thương chân thành của cô, không chỉ với tư cách một giáo viên mà còn như một người thân trong gia đình."
+                  data-journey-message-4="Nhìn lại hành trình đã qua, con nhận ra rằng những thành tích con đạt được đều có bóng dáng của cô phía sau. Cô không phải là người bước lên sân khấu nhận giải cùng con, nhưng cô chính là người đã tiếp thêm cho con sự tự tin để bước lên đó. Trước mỗi cuộc thi, người đầu tiên tiếp thêm cho con sức mạnh luôn là cô. Và có lẽ, đó chính là món quà quý giá nhất mà con may mắn nhận được trong những năm tháng tuổi học trò. 💚"
+                  data-journey-message-5="Cảm ơn cô vì đã luôn tin tưởng, động viên và đồng hành cùng con trên mỗi chặng đường trưởng thành. ✨"
                 >
                   <div
                     class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-paper bg-pine text-sm font-semibold tracking-[0.18em] text-paper shadow-md ring-2 ring-pine/20 transition duration-500 group-hover:-translate-y-1 group-hover:scale-105"
@@ -617,13 +792,13 @@
                     03
                   </div>
                   <h3
-                    class="mt-4 font-serifDisplay text-[1.6rem] font-semibold text-pine"
+                    class="mt-4 flex min-h-[5.5rem] items-center justify-center px-2 text-center font-serifDisplay text-[1.6rem] font-semibold leading-tight text-pine"
                   >
                     Người truyền cảm hứng
                   </h3>
                   <div class="mt-4 overflow-hidden rounded-[14px]">
                     <img
-                      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"
+                      src="assets/nguoitruyencamhung-1.jpg"
                       alt="Cô giáo hướng dẫn học sinh"
                       class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
                     />
@@ -635,7 +810,17 @@
                 </article>
 
                 <article
-                  class="group paper-card rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
+                  class="journey-card group paper-card flex flex-col rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
+                  data-journey-tab
+                  data-journey-image="assets/dieuconbieton-1.jpg"
+                  data-journey-images="assets/dieuconbieton-1.jpg|assets/dieuconbieton-2.jpg|assets/dieuconbieton-3.jpg"
+                  data-journey-alt="Thư tay và món quà kỷ niệm"
+                  data-journey-title="Điều con biết ơn"
+                  data-journey-message-1="Điều con biết ơn cô nhất không phải là những bài học trên lớp, mà là tình yêu thương và sự quan tâm mà cô đã dành cho con trong suốt những năm tháng học trò. Cô không chỉ là cô giáo chủ nhiệm, mà còn là người luôn âm thầm đồng hành, dõi theo từng bước trưởng thành của con."
+                  data-journey-message-2="Con biết ơn những lần cô động viên khi con mệt mỏi, nâng đỡ khi con thiếu tự tin và luôn tin tưởng con ngay cả khi con chưa thực sự tin vào chính mình. Trước mỗi cuộc thi, cô đều dành thời gian gặp riêng để động viên và tiếp thêm cho con sức mạnh. Điều khiến con xúc động hơn cả là lần nào trước khi con đi thi, cô cũng chuẩn bị quà cho con. Đối với cô đó có thể chỉ là một món quà nhỏ, nhưng đối với con, nó chứa đựng biết bao tình yêu thương, sự quan tâm và niềm tin mà cô dành cho mình. Và con luôn cảm nhận được rằng phía sau mình luôn có cô dõi theo, động viên và mong con đạt được những điều tốt đẹp nhất."
+                  data-journey-message-3="Điều khiến con xúc động nhất không phải là những lời khen hay những thành tích đạt được, mà là cảm giác luôn có cô ở phía sau dõi theo và ủng hộ. Con thiếu thốn tình thương của bố, nhưng đổi lại, con lại may mắn nhận được tình thương từ thêm một người mẹ nữa – đó là cô. Cô không sinh ra con, nhưng cô đã dành cho con sự quan tâm, sự bao dung và tình yêu thương chân thành như một người mẹ dành cho đứa con của mình. Chính vì thế, đối với con, cô không chỉ là cô giáo chủ nhiệm, không chỉ là người lái đò tận tụy, mà còn là người mẹ thứ hai trong những năm tháng thanh xuân đẹp nhất."
+                  data-journey-message-4="Có lẽ sau này, khi rời xa mái trường, con sẽ quên đi nhiều bài học hay những con số trên trang sách. Nhưng con sẽ mãi nhớ rằng tuổi thanh xuân của mình đã từng có một người tuyệt vời như cô đồng hành. Con biết ơn vì đã được là học trò của cô, biết ơn vì đã nhận được từ cô không chỉ kiến thức mà còn là tình yêu thương, sự bao dung và những bài học làm người quý giá."
+                  data-journey-message-5="Có những người bước qua cuộc đời ta rồi trở thành kỷ niệm. Còn cô, cô bước vào cuộc đời con và trở thành một phần của tuổi trẻ, một phần của gia đình trong trái tim con. Cảm ơn cô vì đã yêu thương con nhiều hơn một học sinh, để con cảm nhận được rằng mình luôn có một người mẹ thứ hai ở mái trường này. Gặp được cô và trở thành học trò của cô là một trong những điều may mắn nhất của tuổi thanh xuân của con 💚"
                 >
                   <div
                     class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-paper bg-pine text-sm font-semibold tracking-[0.18em] text-paper shadow-md ring-2 ring-pine/20 transition duration-500 group-hover:-translate-y-1 group-hover:scale-105"
@@ -643,13 +828,13 @@
                     04
                   </div>
                   <h3
-                    class="mt-4 font-serifDisplay text-[1.6rem] font-semibold text-pine"
+                    class="mt-4 flex min-h-[5.5rem] items-center justify-center px-2 text-center font-serifDisplay text-[1.6rem] font-semibold leading-tight text-pine"
                   >
-                    Điều con biết ơn nhất
+                    Điều con biết ơn
                   </h3>
                   <div class="mt-4 overflow-hidden rounded-[14px]">
                     <img
-                      src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=800&q=80"
+                      src="assets/dieuconbieton-1.jpg"
                       alt="Thư tay và món quà kỷ niệm"
                       class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
                     />
@@ -661,8 +846,17 @@
                 </article>
 
                 <article
-                  class="group paper-card rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
+                  class="journey-card group paper-card flex flex-col rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
                   id="memory"
+                  data-journey-tab
+                  data-journey-image="assets/gockiniem-1.jpg"
+                  data-journey-images="assets/gockiniem-1.jpg|assets/gockiniem-2.jpg|assets/gockiniem-3.jpg|assets/gockiniem-4.jpg|assets/gockiniem-5.jpg|assets/gockiniem-6.jpg|assets/gockiniem-7.jpg|assets/gockiniem-8.jpg|assets/gockiniem-9.jpg|assets/gockiniem-10.jpg|assets/gockiniem-11.jpg"
+                  data-journey-alt="Ảnh Polaroid treo trên dây"
+                  data-journey-title="Góc kỷ niệm"
+                  data-journey-message-1="Mỗi bức ảnh trong góc kỷ niệm này đều lưu giữ một phần thanh xuân đẹp đẽ của con dưới mái trường thân yêu. Đó không chỉ là những khoảnh khắc được ghi lại bằng máy ảnh, mà còn là những ký ức chứa đựng tình yêu thương, sự dạy dỗ và những dấu ấn mà cô đã để lại trong trái tim con."
+                  data-journey-message-2="Con nhớ những lần được cô động viên trước các cuộc thi, những buổi trò chuyện ngắn nhưng đầy ấm áp, những lời nhắc nhở tưởng chừng giản đơn nhưng lại theo con suốt chặng đường trưởng thành. Mỗi khoảnh khắc bên cô đều là một mảnh ghép quý giá làm nên những năm tháng học trò rực rỡ nhất của con."
+                  data-journey-message-3="Khi nhìn lại những bức ảnh này, con không chỉ nhìn thấy hình ảnh của cô và con trong quá khứ, mà còn nhìn thấy cả một hành trình yêu thương, đồng hành và trưởng thành. Thời gian có thể trôi đi, nhưng những ký ức ấy sẽ mãi ở lại, như những trang đẹp nhất trong cuốn nhật ký tuổi học trò của con."
+                  data-journey-message-4="Cảm ơn cô vì đã xuất hiện trong thanh xuân của con, để mỗi lần nhìn lại những kỷ niệm này, con đều cảm thấy biết ơn và tự hào vì đã từng là học trò của cô. Mỗi bức ảnh là một câu chuyện, mỗi kỷ niệm là một món quà mà con sẽ mãi trân trọng. ❤️"
                 >
                   <div
                     class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-paper bg-pine text-sm font-semibold tracking-[0.18em] text-paper shadow-md ring-2 ring-pine/20 transition duration-500 group-hover:-translate-y-1 group-hover:scale-105"
@@ -670,13 +864,13 @@
                     05
                   </div>
                   <h3
-                    class="mt-4 font-serifDisplay text-[1.6rem] font-semibold text-pine"
+                    class="mt-4 flex min-h-[5.5rem] items-center justify-center px-2 text-center font-serifDisplay text-[1.6rem] font-semibold leading-tight text-pine"
                   >
                     Góc kỷ niệm
                   </h3>
                   <div class="mt-4 overflow-hidden rounded-[14px]">
                     <img
-                      src="https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80"
+                      src="assets/gockiniem-1.jpg"
                       alt="Ảnh Polaroid treo trên dây"
                       class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
                     />
@@ -688,8 +882,21 @@
                 </article>
 
                 <article
-                  class="group paper-card rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
+                  class="journey-card group paper-card flex flex-col rounded-[24px] border border-sand/55 p-4 text-center shadow-paper transition duration-500 hover:-translate-y-2 hover:border-olive/40 hover:shadow-float"
                   id="letter"
+                  data-journey-tab
+                  data-journey-image="assets/lethugioc-1.jpg"
+                  data-journey-alt="Lá thư viết tay cùng bút và hoa nhỏ"
+                  data-journey-title="Gửi cô kính yêu của con"
+                  data-journey-message-1="Từng dòng chữ nhỏ là những lời cảm ơn chân thành nhất mà con muốn gửi lại cho cô."
+                  data-journey-message-2="Cô biết không, điều may mắn nhất trong những năm tháng học trò của con chính là được gặp cô và trở thành học trò của cô. Cô không chỉ là người dạy cho con kiến thức, mà còn là người dạy con cách sống, cách cố gắng và cách tin vào chính mình."
+                  data-journey-message-3="Con vẫn nhớ những lần trước mỗi cuộc thi, cô đều gọi con lại để động viên. Cô luôn dành cho con những lời khích lệ ấm áp và cả những món quà nhỏ chứa đựng biết bao yêu thương. Đối với con, đó là những món quà vô giá. Mỗi lần nhận quà từ cô, con đều cảm thấy mình được tiếp thêm sức mạnh, như có một người luôn tin tưởng và âm thầm dõi theo phía sau."
+                  data-journey-message-4="Con biết mình không phải là học trò hoàn hảo. Có những lúc con còn vụng về, còn khiến cô phải lo lắng. Thế nhưng cô vẫn luôn bao dung, động viên và cho con cơ hội để trưởng thành. Chính sự tin tưởng của cô đã giúp con có thêm động lực để cố gắng mỗi ngày, để trở thành phiên bản tốt hơn của chính mình."
+                  data-journey-message-5="Có những điều con chưa từng nói với cô, nhưng con luôn giữ trong lòng. Đó là sự biết ơn sâu sắc vì cô đã dành cho con sự quan tâm đặc biệt, vì cô luôn lắng nghe, luôn động viên và luôn xuất hiện vào những lúc con cần nhất. Với con, cô không chỉ là một người cô giáo đáng kính mà còn là một người mà con vô cùng yêu quý và trân trọng."
+                  data-journey-message-6="Rồi một ngày nào đó, con sẽ rời xa mái trường này. Những giờ học sẽ khép lại, những cuộc thi rồi cũng trở thành kỷ niệm. Nhưng có một điều sẽ không bao giờ thay đổi, đó là lòng biết ơn và tình cảm mà con dành cho cô. Dù sau này con có đi đâu, trở thành ai, con vẫn sẽ luôn nhớ về cô – người đã góp phần làm nên những năm tháng thanh xuân đẹp đẽ nhất của con."
+                  data-journey-message-7="Trang web này chỉ là một món quà nhỏ được tạo nên từ tất cả tình cảm, sự kính trọng và lòng biết ơn của con dành cho cô. Có thể nó còn đơn giản, còn nhiều thiếu sót, nhưng trong đó là những điều chân thành nhất mà con muốn gửi đến cô."
+                  data-journey-message-8="Con chỉ mong cô luôn mạnh khỏe, hạnh phúc và mãi giữ nụ cười hiền hậu ấy. Mong rằng cô sẽ luôn nhận được thật nhiều yêu thương, bởi cô xứng đáng với những điều tốt đẹp nhất trên cuộc đời này."
+                  data-journey-message-9="Con cảm ơn cô vì tất cả!"
                 >
                   <div
                     class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-paper bg-pine text-sm font-semibold tracking-[0.18em] text-paper shadow-md ring-2 ring-pine/20 transition duration-500 group-hover:-translate-y-1 group-hover:scale-105"
@@ -697,7 +904,7 @@
                     06
                   </div>
                   <h3
-                    class="mt-4 font-serifDisplay text-[1.6rem] font-semibold text-pine"
+                    class="mt-4 flex min-h-[5.5rem] items-center justify-center px-2 text-center font-serifDisplay text-[1.6rem] font-semibold leading-tight text-pine"
                   >
                     Lá thư gửi cô
                   </h3>
@@ -746,17 +953,423 @@
           </div>
         </section>
       </main>
+
+      <section
+        id="journey-detail-page"
+        class="hidden px-4 pb-16 pt-6 sm:px-6 lg:px-10"
+      >
+        <div class="mx-auto max-w-7xl">
+          <button
+            id="journey-back-button"
+            type="button"
+            class="mb-6 inline-flex items-center gap-3 rounded-full border border-pine/15 bg-ivory/90 px-5 py-3 text-sm font-semibold text-pine shadow-paper transition hover:-translate-y-0.5 hover:bg-white"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              class="h-4 w-4 fill-none stroke-current stroke-[2]"
+            >
+              <path d="M15 6 9 12l6 6"></path>
+            </svg>
+            Quay lại hành trình
+          </button>
+
+          <div
+            class="overflow-hidden rounded-[38px] border border-white/55 bg-[rgba(255,248,238,0.95)] shadow-paper"
+          >
+            <div class="flex flex-col">
+              <div
+                class="relative h-[320px] overflow-hidden bg-[#ead7bc] sm:h-[420px] lg:h-[480px]"
+              >
+                <img
+                  id="journey-detail-image"
+                  src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1400&q=80"
+                  alt="Lớp học ngày đầu gặp cô"
+                  class="h-full w-full object-contain object-center"
+                />
+                <div
+                  class="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/20 to-transparent"
+                ></div>
+                <div
+                  class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/30 to-transparent"
+                ></div>
+                <button
+                  id="journey-detail-prev"
+                  type="button"
+                  class="absolute left-4 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/60 bg-[rgba(255,250,240,0.92)] text-pine shadow-[0_12px_30px_rgba(38,71,52,0.18)] transition hover:scale-105 hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 sm:left-6 sm:h-14 sm:w-14"
+                  aria-label="áº¢nh trÆ°á»›c"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    class="h-5 w-5 fill-none stroke-current stroke-[2.2]"
+                  >
+                    <path d="M14.5 6 8.5 12l6 6"></path>
+                  </svg>
+                </button>
+                <button
+                  id="journey-detail-next"
+                  type="button"
+                  class="absolute right-4 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/60 bg-[rgba(255,250,240,0.92)] text-pine shadow-[0_12px_30px_rgba(38,71,52,0.18)] transition hover:scale-105 hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 sm:right-6 sm:h-14 sm:w-14"
+                  aria-label="áº¢nh tiáº¿p theo"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    class="h-5 w-5 fill-none stroke-current stroke-[2.2]"
+                  >
+                    <path d="m9.5 6 6 6-6 6"></path>
+                  </svg>
+                </button>
+                <div
+                  class="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full bg-[rgba(38,71,52,0.58)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-paper backdrop-blur-sm"
+                >
+                  <span id="journey-detail-image-index">01 / 01</span>
+                </div>
+              </div>
+
+              <div
+                class="paper-card flex flex-col justify-start border-t border-sand/35 p-6 sm:p-8 lg:p-10"
+              >
+                <p
+                  class="text-sm font-semibold uppercase tracking-[0.24em] text-olive"
+                >
+                  Kỷ niệm được mở ra
+                </p>
+                <h2
+                  id="journey-detail-title"
+                  class="mt-4 font-serifDisplay text-4xl font-semibold text-pine sm:text-[2.8rem]"
+                >
+                  Ngày đầu gặp cô
+                </h2>
+                <div id="journey-detail-messages" class="mt-6 space-y-5"></div>
+              </div>
+            </div>
+            <div
+              class="hidden border-t border-sand/40 bg-ivory/70 px-6 py-6 sm:px-8 lg:px-10"
+            >
+              <p
+                id="journey-detail-message-1-bottom"
+                class="journey-message text-base leading-8 text-bark/85 sm:text-lg"
+              ></p>
+              <p
+                id="journey-detail-message-2-bottom"
+                class="journey-message mt-5 hidden text-base leading-8 text-bark/85 sm:text-lg"
+              ></p>
+              <p
+                id="journey-detail-message-3-bottom"
+                class="journey-message mt-5 hidden text-base leading-8 text-bark/85 sm:text-lg"
+              ></p>
+              <p
+                id="journey-detail-message-4-bottom"
+                class="journey-message mt-5 hidden text-base leading-8 text-bark/85 sm:text-lg"
+              ></p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
 
     <script>
+      const loadingOverlay = document.getElementById("loading-overlay");
+      const backgroundAudio = document.getElementById("background-audio");
+      const audioMuteButtons = document.querySelectorAll("[data-audio-mute]");
+      const audioMuteLabels = document.querySelectorAll(
+        "[data-audio-mute-label]",
+      );
+      const audioSlashIcons = document.querySelectorAll("[data-audio-slash]");
       const menuToggle = document.getElementById("menu-toggle");
       const pageShell = document.getElementById("page-shell");
+      const mainContent = document.getElementById("main-content");
+      const journeyDetailPage = document.getElementById("journey-detail-page");
+      const journeyBackButton = document.getElementById("journey-back-button");
+      const journeyDetailImage = document.getElementById(
+        "journey-detail-image",
+      );
+      const journeyDetailPrev = document.getElementById("journey-detail-prev");
+      const journeyDetailNext = document.getElementById("journey-detail-next");
+      const journeyDetailImageIndex = document.getElementById(
+        "journey-detail-image-index",
+      );
+      const journeyDetailTitle = document.getElementById(
+        "journey-detail-title",
+      );
+      const journeyDetailMessages = document.getElementById(
+        "journey-detail-messages",
+      );
+      const journeyTabs = document.querySelectorAll("[data-journey-tab]");
+      let activeJourneyImages = [];
+      let activeJourneyImageIndex = 0;
+
+      const wait = (duration) =>
+        new Promise((resolve) => {
+          window.setTimeout(resolve, duration);
+        });
+
+      const collectPageImages = () =>
+        Array.from(document.images).filter(
+          (image) => !loadingOverlay?.contains(image),
+        );
+
+      const waitForImage = (image) => {
+        if (image.complete && image.naturalWidth > 0) {
+          return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+          const finish = () => {
+            image.removeEventListener("load", finish);
+            image.removeEventListener("error", finish);
+            resolve();
+          };
+
+          image.addEventListener("load", finish, { once: true });
+          image.addEventListener("error", finish, { once: true });
+        });
+      };
+
+      const hideLoadingOverlay = () => {
+        loadingOverlay?.classList.add("is-hidden");
+        document.body.classList.remove("is-preloading");
+      };
+
+      const preloadPageImages = async () => {
+        const minimumDelay = wait(2000);
+        const maximumDelay = wait(5000);
+        const imagesReady = Promise.all(collectPageImages().map(waitForImage));
+
+        await Promise.race([
+          Promise.all([minimumDelay, imagesReady]),
+          maximumDelay,
+        ]);
+
+        hideLoadingOverlay();
+      };
+
+      const updateAudioUi = () => {
+        const isMuted = !backgroundAudio || backgroundAudio.muted;
+
+        audioMuteLabels.forEach((label) => {
+          label.textContent = isMuted ? "Báº­t Ã¢m thanh" : "Táº¯t Ã¢m thanh";
+        });
+
+        audioMuteButtons.forEach((button) => {
+          button.setAttribute("aria-label", isMuted ? "Bật nhạc" : "Tắt nhạc");
+        });
+
+        audioSlashIcons.forEach((icon) => {
+          icon.classList.toggle("hidden", isMuted);
+        });
+      };
+
+      const playAudio = async () => {
+        if (!backgroundAudio) {
+          return;
+        }
+
+        backgroundAudio.muted = false;
+
+        try {
+          await backgroundAudio.play();
+        } catch (error) {
+          console.warn("KhÃ´ng thá»ƒ pháº¡t nháº¡c.", error);
+        }
+
+        updateAudioUi();
+      };
+
+      const toggleAudioMuted = async () => {
+        if (!backgroundAudio) {
+          return;
+        }
+
+        const shouldUnmute = backgroundAudio.muted;
+        backgroundAudio.muted = !backgroundAudio.muted;
+
+        if (shouldUnmute && backgroundAudio.paused) {
+          await playAudio();
+          return;
+        }
+
+        updateAudioUi();
+      };
+
+      audioMuteButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          toggleAudioMuted();
+        });
+      });
+
+      backgroundAudio?.addEventListener("volumechange", updateAudioUi);
 
       if (menuToggle && pageShell) {
         menuToggle.addEventListener("click", () => {
           pageShell.classList.toggle("menu-open");
         });
       }
+
+      const setActiveJourneyTab = (tab) => {
+        journeyTabs.forEach((item) => {
+          item.classList.toggle("is-active", item === tab);
+          item.setAttribute("role", "button");
+          item.setAttribute("tabindex", "0");
+          item.setAttribute("aria-pressed", item === tab ? "true" : "false");
+        });
+      };
+
+      const getJourneyAttr = (tab, name) => tab.getAttribute(name) || "";
+
+      const getJourneyImages = (tab) => {
+        const rawImages = getJourneyAttr(tab, "data-journey-images");
+        const images = rawImages
+          .split("|")
+          .map((image) => image.trim())
+          .filter(Boolean);
+
+        if (images.length) {
+          return images;
+        }
+
+        const fallbackImage = getJourneyAttr(tab, "data-journey-image").trim();
+        return fallbackImage ? [fallbackImage] : [];
+      };
+
+      const updateJourneyImage = () => {
+        if (!journeyDetailImage || !activeJourneyImages.length) {
+          return;
+        }
+
+        journeyDetailImage.src = activeJourneyImages[activeJourneyImageIndex];
+        journeyDetailImageIndex.textContent = `${String(
+          activeJourneyImageIndex + 1,
+        ).padStart(
+          2,
+          "0",
+        )} / ${String(activeJourneyImages.length).padStart(2, "0")}`;
+
+        if (journeyDetailPrev) {
+          journeyDetailPrev.disabled = activeJourneyImages.length <= 1;
+        }
+
+        if (journeyDetailNext) {
+          journeyDetailNext.disabled = activeJourneyImages.length <= 1;
+        }
+      };
+
+      const getJourneyMessages = (tab) => {
+        const indexedMessages = Array.from({ length: 9 }, (_, index) =>
+          getJourneyAttr(tab, `data-journey-message-${index + 1}`),
+        );
+
+        if (indexedMessages.some((message) => message && message.trim())) {
+          return indexedMessages;
+        }
+
+        const rawMessage = getJourneyAttr(tab, "data-journey-message");
+        const messageParts = rawMessage
+          .split(/\r?\n/)
+          .map((part) => part.trim())
+          .filter(Boolean);
+
+        if (messageParts.length >= 2) {
+          const middleIndex = Math.ceil(messageParts.length / 2);
+          return [
+            messageParts.slice(0, middleIndex).join(" "),
+            messageParts.slice(middleIndex).join(" "),
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ];
+        }
+
+        return [rawMessage.trim(), "", "", "", "", "", "", "", ""];
+      };
+
+      const renderJourneyMessages = (messages) => {
+        if (!journeyDetailMessages) {
+          return;
+        }
+
+        const validMessages = messages.filter(
+          (message) => message && message.trim(),
+        );
+
+        journeyDetailMessages.innerHTML = validMessages
+          .map(
+            (message) =>
+              `<p class="journey-message text-base leading-8 text-bark/85 sm:text-lg">${message}</p>`,
+          )
+          .join("");
+      };
+
+      const openJourneyDetailPage = (tab) => {
+        setActiveJourneyTab(tab);
+
+        activeJourneyImages = getJourneyImages(tab);
+        activeJourneyImageIndex = 0;
+
+        if (journeyDetailImage) {
+          journeyDetailImage.alt = getJourneyAttr(tab, "data-journey-alt");
+        }
+
+        updateJourneyImage();
+
+        if (journeyDetailTitle) {
+          journeyDetailTitle.textContent = getJourneyAttr(
+            tab,
+            "data-journey-title",
+          );
+        }
+
+        const messages = getJourneyMessages(tab);
+        renderJourneyMessages(messages);
+
+        mainContent?.classList.add("hidden");
+        journeyDetailPage?.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      const closeJourneyDetailPage = () => {
+        journeyDetailPage?.classList.add("hidden");
+        mainContent?.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      journeyTabs.forEach((tab) => {
+        tab.addEventListener("click", () => openJourneyDetailPage(tab));
+        tab.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openJourneyDetailPage(tab);
+          }
+        });
+      });
+
+      journeyDetailPrev?.addEventListener("click", () => {
+        if (activeJourneyImages.length <= 1) {
+          return;
+        }
+
+        activeJourneyImageIndex =
+          (activeJourneyImageIndex - 1 + activeJourneyImages.length) %
+          activeJourneyImages.length;
+        updateJourneyImage();
+      });
+
+      journeyDetailNext?.addEventListener("click", () => {
+        if (activeJourneyImages.length <= 1) {
+          return;
+        }
+
+        activeJourneyImageIndex =
+          (activeJourneyImageIndex + 1) % activeJourneyImages.length;
+        updateJourneyImage();
+      });
+
+      journeyBackButton?.addEventListener("click", closeJourneyDetailPage);
+      updateAudioUi();
+      preloadPageImages();
     </script>
   </body>
 </html>
