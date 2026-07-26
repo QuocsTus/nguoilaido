@@ -409,7 +409,7 @@
     </style>
   </head>
   <body class="is-preloading bg-paper text-bark">
-    <audio id="background-audio" loop preload="auto">
+    <audio id="background-audio" autoplay loop preload="auto">
       <source src="assets/nguoithay.mp3" type="audio/mpeg" />
     </audio>
     <div id="loading-overlay" class="loading-overlay" aria-live="polite">
@@ -554,7 +554,7 @@
               type="button"
               data-audio-mute
               class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-pine/15 bg-pine text-paper shadow-paper transition duration-300 hover:-translate-y-0.5 hover:bg-[#1d3928] lg:hidden"
-              aria-label="Báº­t nháº¡c"
+              aria-label="Bật nhạc"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -741,19 +741,19 @@
           <div
             class="mx-auto max-w-7xl overflow-hidden rounded-[38px] border border-white/50 bg-[rgba(255,248,238,0.92)] px-5 py-12 shadow-paper sm:px-8 lg:px-10"
           >
-            <div class="border-t border-dashed border-sand/80 pt-8">
+            <div class="pt-6">
               <div class="flex items-center justify-center gap-4 sm:gap-6">
-                <span class="h-px w-12 bg-sand sm:w-24"></span>
+                <span class="hidden h-px w-12 bg-sand lg:block sm:w-24"></span>
                 <div class="flex items-center gap-3 text-moss">
-                  <span class="text-xl">❦</span>
+                  <span class="hidden text-xl sm:inline">❦</span>
                   <h2
                     class="text-center font-serifDisplay text-2xl font-semibold uppercase tracking-[0.12em] text-pine lg:text-4xl sm:tracking-[0.16em]"
                   >
                     Hành trình của con
                   </h2>
-                  <span class="text-xl">❦</span>
+                  <span class="hidden text-xl sm:inline">❦</span>
                 </div>
-                <span class="h-px w-12 bg-sand sm:w-24"></span>
+                <span class="hidden h-px w-12 bg-sand lg:block sm:w-24"></span>
               </div>
 
               <div class="mt-10 grid gap-5 md:grid-cols-3 xl:grid-cols-5">
@@ -1125,6 +1125,15 @@
           window.setTimeout(resolve, duration);
         });
 
+      const enableAudioOnFirstInteraction = () => {
+        const startAudio = async () => {
+          await playAudio();
+        };
+
+        window.addEventListener("pointerdown", startAudio, { once: true });
+        window.addEventListener("keydown", startAudio, { once: true });
+      };
+
       const collectPageImages = () =>
         Array.from(document.images).filter(
           (image) => !loadingOverlay?.contains(image),
@@ -1192,6 +1201,7 @@
           await backgroundAudio.play();
         } catch (error) {
           console.warn("KhÃ´ng thá»ƒ pháº¡t nháº¡c.", error);
+          enableAudioOnFirstInteraction();
         }
 
         updateAudioUi();
@@ -1397,6 +1407,7 @@
 
       journeyBackButton?.addEventListener("click", closeJourneyDetailPage);
       updateAudioUi();
+      playAudio();
       preloadPageImages();
     </script>
   </body>
